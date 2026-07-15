@@ -2,7 +2,7 @@ package tilo.spatial
 
 internal data class RBushEntry<T>(
     val item: T,
-    val bounds: SpatialRect
+    val bounds: SpatialRect,
 )
 
 /**
@@ -16,7 +16,7 @@ internal class RBushNode<T>(
     val height: Int,
     val leaf: Boolean,
     val children: MutableList<RBushNode<T>> = mutableListOf(),
-    val entries: MutableList<RBushEntry<T>> = mutableListOf()
+    val entries: MutableList<RBushEntry<T>> = mutableListOf(),
 ) {
     var bounds: SpatialRect = EMPTY_BOUNDS
         private set
@@ -32,11 +32,12 @@ internal class RBushNode<T>(
             return
         }
 
-        bounds = if (leaf) {
-            SpatialRect.containing(entries.map { it.bounds })
-        } else {
-            SpatialRect.containing(children.map { it.bounds })
-        }
+        bounds =
+            if (leaf) {
+                SpatialRect.containing(entries.map { it.bounds })
+            } else {
+                SpatialRect.containing(children.map { it.bounds })
+            }
         hasBounds = true
     }
 

@@ -7,7 +7,7 @@ data class SpatialRect(
     val minX: Double,
     val minY: Double,
     val maxX: Double,
-    val maxY: Double
+    val maxY: Double,
 ) {
     init {
         require(minX <= maxX) { "minX must be <= maxX" }
@@ -20,19 +20,23 @@ data class SpatialRect(
     val margin: Double get() = width + height
 
     fun intersects(other: SpatialRect): Boolean =
-        maxX >= other.minX && other.maxX >= minX &&
-            maxY >= other.minY && other.maxY >= minY
+        maxX >= other.minX &&
+            other.maxX >= minX &&
+            maxY >= other.minY &&
+            other.maxY >= minY
 
     fun contains(other: SpatialRect): Boolean =
-        minX <= other.minX && minY <= other.minY &&
-            maxX >= other.maxX && maxY >= other.maxY
+        minX <= other.minX &&
+            minY <= other.minY &&
+            maxX >= other.maxX &&
+            maxY >= other.maxY
 
     fun union(other: SpatialRect): SpatialRect =
         SpatialRect(
             minX = minOf(minX, other.minX),
             minY = minOf(minY, other.minY),
             maxX = maxOf(maxX, other.maxX),
-            maxY = maxOf(maxY, other.maxY)
+            maxY = maxOf(maxY, other.maxY),
         )
 
     fun enlargementNeeded(other: SpatialRect): Double = union(other).area - area

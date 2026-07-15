@@ -14,7 +14,7 @@ package tilo.spatial
  */
 internal class RBushBulkLoader<T>(
     private val maxEntries: Int,
-    private val boundsOf: (T) -> SpatialRect
+    private val boundsOf: (T) -> SpatialRect,
 ) {
     fun build(items: List<T>): RBushNode<T> {
         var level = packEntries(items.map { item -> RBushEntry(item, boundsOf(item)) })
@@ -40,7 +40,7 @@ internal class RBushBulkLoader<T>(
                         RBushNode(
                             height = 1,
                             leaf = true,
-                            entries = leafEntries.toMutableList()
+                            entries = leafEntries.toMutableList(),
                         ).also { it.recalculateBounds() }
                     }
             }
@@ -60,7 +60,7 @@ internal class RBushBulkLoader<T>(
                         RBushNode(
                             height = children.first().height + 1,
                             leaf = false,
-                            children = children.toMutableList()
+                            children = children.toMutableList(),
                         ).also { it.recalculateBounds() }
                     }
             }

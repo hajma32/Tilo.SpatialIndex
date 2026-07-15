@@ -12,40 +12,46 @@ class RBushPerformanceTest {
         val items = generateItems(itemCount = itemCount)
         val queries = generateQueries(queryCount = queryCount)
 
-        val listLoad = measure("List bulk copy") {
-            items.toMutableList()
-        }
-
-        val treeLoad = measure("RBush bulk load") {
-            RBush<TestFeature> { it.bounds }.load(items)
-        }
-
-        val listInsert = measure("List incremental add") {
-            mutableListOf<TestFeature>().apply {
-                items.forEach(::add)
+        val listLoad =
+            measure("List bulk copy") {
+                items.toMutableList()
             }
-        }
 
-        val treeInsert = measure("RBush incremental insert") {
-            RBush<TestFeature> { it.bounds }.apply {
-                items.forEach(::insert)
+        val treeLoad =
+            measure("RBush bulk load") {
+                RBush<TestFeature> { it.bounds }.load(items)
             }
-        }
+
+        val listInsert =
+            measure("List incremental add") {
+                mutableListOf<TestFeature>().apply {
+                    items.forEach(::add)
+                }
+            }
+
+        val treeInsert =
+            measure("RBush incremental insert") {
+                RBush<TestFeature> { it.bounds }.apply {
+                    items.forEach(::insert)
+                }
+            }
 
         val tree = treeLoad.value
         val plainList = listLoad.value
 
-        val listSearch = measure("List viewport search") {
-            queries.sumOf { query ->
-                plainList.count { item -> item.bounds.intersects(query) }
+        val listSearch =
+            measure("List viewport search") {
+                queries.sumOf { query ->
+                    plainList.count { item -> item.bounds.intersects(query) }
+                }
             }
-        }
 
-        val treeSearch = measure("RBush viewport search") {
-            queries.sumOf { query ->
-                tree.search(query).size
+        val treeSearch =
+            measure("RBush viewport search") {
+                queries.sumOf { query ->
+                    tree.search(query).size
+                }
             }
-        }
 
         assertEquals(listSearch.value, treeSearch.value)
 
@@ -62,7 +68,7 @@ class RBushPerformanceTest {
                 appendLine(listSearch.summary())
                 appendLine(treeSearch.summary(relativeTo = listSearch))
                 appendLine("matchedFeatures=${treeSearch.value}")
-            }
+            },
         )
     }
 
@@ -73,12 +79,13 @@ class RBushPerformanceTest {
             val y = (index / columns).toDouble() * 10.0
             TestFeature(
                 id = index,
-                bounds = SpatialRect(
-                    minX = x,
-                    minY = y,
-                    maxX = x + 4.0,
-                    maxY = y + 4.0
-                )
+                bounds =
+                    SpatialRect(
+                        minX = x,
+                        minY = y,
+                        maxX = x + 4.0,
+                        maxY = y + 4.0,
+                    ),
             )
         }
     }
@@ -93,14 +100,14 @@ class RBushPerformanceTest {
                 minX = x,
                 minY = y,
                 maxX = x + 90.0,
-                maxY = y + 90.0
+                maxY = y + 90.0,
             )
         }
     }
 
     private inline fun <T> measure(
         name: String,
-        block: () -> T
+        block: () -> T,
     ): Measurement<T> {
         // One warmup keeps class loading and first JIT passes out of the reported number.
         block()
@@ -112,27 +119,26 @@ class RBushPerformanceTest {
 
     private data class TestFeature(
         val id: Int,
-        val bounds: SpatialRect
+        val bounds: SpatialRect,
     )
 
     private data class Measurement<T>(
         val name: String,
         val elapsedNanos: Long,
-        val value: T
+        val value: T,
     ) {
-        fun summary(
-            relativeTo: Measurement<*>? = null
-        ): String {
+        fun summary(relativeTo: Measurement<*>? = null): String {
             val millis = elapsedNanos / NANOS_PER_MILLI
             val base = "$name: ${millis.formatMillis()} ms"
             if (relativeTo == null) return base
 
             val ratio = relativeTo.elapsedNanos.toDouble() / elapsedNanos.toDouble()
-            val suffix = if (ratio >= 1.0) {
-                "${ratio.formatRatio()}x faster than ${relativeTo.name}"
-            } else {
-                "${(1.0 / ratio).formatRatio()}x slower than ${relativeTo.name}"
-            }
+            val suffix =
+                if (ratio >= 1.0) {
+                    "${ratio.formatRatio()}x faster than ${relativeTo.name}"
+                } else {
+                    "${(1.0 / ratio).formatRatio()}x slower than ${relativeTo.name}"
+                }
             return "$base ($suffix)"
         }
     }

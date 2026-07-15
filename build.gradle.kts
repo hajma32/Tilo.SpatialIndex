@@ -2,11 +2,9 @@ import org.gradle.api.tasks.testing.Test
 
 plugins {
     kotlin("multiplatform")
-    `maven-publish`
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.mavenPublish)
 }
-
-group = "eu.tilo"
-version = "0.1.0-SNAPSHOT"
 
 kotlin {
     jvm()

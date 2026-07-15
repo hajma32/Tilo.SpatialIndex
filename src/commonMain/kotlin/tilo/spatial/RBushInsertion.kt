@@ -7,7 +7,7 @@ internal fun <T> insertEntry(
     root: RBushNode<T>,
     entry: RBushEntry<T>,
     maxEntries: Int,
-    minEntries: Int
+    minEntries: Int,
 ): RBushNode<T> {
     val path = mutableListOf<RBushNode<T>>()
     val leaf = chooseSubtree(root, entry.bounds, path)
@@ -43,31 +43,32 @@ internal fun <T> insertEntry(
 private fun <T> chooseSubtree(
     node: RBushNode<T>,
     bounds: SpatialRect,
-    path: MutableList<RBushNode<T>>
+    path: MutableList<RBushNode<T>>,
 ): RBushNode<T> {
     path.add(node)
     if (node.leaf) return node
 
-    val next = node.children.minWith(
-        compareBy<RBushNode<T>> { it.bounds.enlargementNeeded(bounds) }
-            .thenBy { it.bounds.area }
-    )
+    val next =
+        node.children.minWith(
+            compareBy<RBushNode<T>> { it.bounds.enlargementNeeded(bounds) }
+                .thenBy { it.bounds.area },
+        )
     return chooseSubtree(next, bounds, path)
 }
 
 private fun <T> splitRoot(
     left: RBushNode<T>,
-    right: RBushNode<T>
+    right: RBushNode<T>,
 ): RBushNode<T> =
     RBushNode(
         height = left.height + 1,
         leaf = false,
-        children = mutableListOf(left, right)
+        children = mutableListOf(left, right),
     ).also { it.recalculateBounds() }
 
 private fun <T> splitNode(
     node: RBushNode<T>,
-    minEntries: Int
+    minEntries: Int,
 ): RBushNode<T> {
     if (node.leaf) {
         val groups = splitEntries(node.entries, minEntries)
@@ -88,7 +89,7 @@ private fun <T> splitNode(
 
 private fun <T> splitEntries(
     entries: List<RBushEntry<T>>,
-    minEntries: Int
+    minEntries: Int,
 ): Pair<List<RBushEntry<T>>, List<RBushEntry<T>>> {
     val sorted = entries.sortedBy { it.bounds.minX }
     return splitSorted(sorted, minEntries) { group -> SpatialRect.containing(group.map { it.bounds }) }
@@ -96,7 +97,7 @@ private fun <T> splitEntries(
 
 private fun <T> splitChildren(
     children: List<RBushNode<T>>,
-    minEntries: Int
+    minEntries: Int,
 ): Pair<List<RBushNode<T>>, List<RBushNode<T>>> {
     val sorted = children.sortedBy { it.bounds.minX }
     return splitSorted(sorted, minEntries) { group -> SpatialRect.containing(group.map { it.bounds }) }
@@ -111,7 +112,7 @@ private fun <T> splitChildren(
 private fun <E> splitSorted(
     entries: List<E>,
     minEntries: Int,
-    boundsOfGroup: (List<E>) -> SpatialRect
+    boundsOfGroup: (List<E>) -> SpatialRect,
 ): Pair<List<E>, List<E>> {
     var bestIndex = minEntries
     var bestOverlap = Double.POSITIVE_INFINITY

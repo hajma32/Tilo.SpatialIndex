@@ -8,9 +8,10 @@ import kotlin.test.assertTrue
 class RBushTest {
     @Test
     fun bulkLoadSearchesIntersectingItems() {
-        val items = (0 until 100).map { index ->
-            TestItem(index, SpatialRect(index.toDouble(), 0.0, index + 0.5, 0.5))
-        }
+        val items =
+            (0 until 100).map { index ->
+                TestItem(index, SpatialRect(index.toDouble(), 0.0, index + 0.5, 0.5))
+            }
         val tree = RBush<TestItem> { it.bounds }.load(items)
 
         val result = tree.search(SpatialRect(10.25, -1.0, 12.25, 1.0)).map { it.id }.sorted()
@@ -21,8 +22,9 @@ class RBushTest {
 
     @Test
     fun insertAddsItemsToExistingTree() {
-        val tree = RBush<TestItem> { it.bounds }
-            .load(listOf(TestItem(1, SpatialRect(0.0, 0.0, 1.0, 1.0))))
+        val tree =
+            RBush<TestItem> { it.bounds }
+                .load(listOf(TestItem(1, SpatialRect(0.0, 0.0, 1.0, 1.0))))
 
         tree.insert(TestItem(2, SpatialRect(10.0, 10.0, 11.0, 11.0)))
 
@@ -32,9 +34,10 @@ class RBushTest {
 
     @Test
     fun insertAddsItemsToBulkLoadedTree() {
-        val items = (0 until 100).map { index ->
-            TestItem(index, SpatialRect(index.toDouble(), 0.0, index + 0.5, 0.5))
-        }
+        val items =
+            (0 until 100).map { index ->
+                TestItem(index, SpatialRect(index.toDouble(), 0.0, index + 0.5, 0.5))
+            }
         val tree = RBush<TestItem> { it.bounds }.load(items)
         val inserted = TestItem(1_000, SpatialRect(1_000.0, 1_000.0, 1_001.0, 1_001.0))
 
@@ -59,19 +62,20 @@ class RBushTest {
 
     @Test
     fun spatialItemFactoryUsesBoundsProperty() {
-        val tree = RBush<TestSpatialItem>().load(
-            listOf(TestSpatialItem(SpatialRect(5.0, 5.0, 6.0, 6.0)))
-        )
+        val tree =
+            RBush<TestSpatialItem>().load(
+                listOf(TestSpatialItem(SpatialRect(5.0, 5.0, 6.0, 6.0))),
+            )
 
         assertEquals(1, tree.search(SpatialRect(4.0, 4.0, 7.0, 7.0)).size)
     }
 
     private data class TestItem(
         val id: Int,
-        val bounds: SpatialRect
+        val bounds: SpatialRect,
     )
 
     private data class TestSpatialItem(
-        override val bounds: SpatialRect
+        override val bounds: SpatialRect,
     ) : SpatialItem
 }

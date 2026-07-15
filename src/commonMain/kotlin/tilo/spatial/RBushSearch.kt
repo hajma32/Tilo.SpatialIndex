@@ -6,7 +6,7 @@ package tilo.spatial
 internal fun <T> searchIntersections(
     node: RBushNode<T>,
     query: SpatialRect,
-    results: MutableList<T>
+    results: MutableList<T>,
 ) {
     if (!node.hasBounds || !node.bounds.intersects(query)) return
 
@@ -24,7 +24,7 @@ internal fun <T> searchIntersections(
 
 internal fun <T> collectItems(
     node: RBushNode<T>,
-    results: MutableList<T>
+    results: MutableList<T>,
 ) {
     if (node.leaf) {
         node.entries.forEach { results.add(it.item) }

@@ -9,7 +9,7 @@ package tilo.spatial
 internal fun <T> removeItem(
     node: RBushNode<T>,
     item: T,
-    itemBounds: SpatialRect
+    itemBounds: SpatialRect,
 ): Boolean {
     if (node.leaf) {
         val index = node.entries.indexOfFirst { it.item == item }
@@ -22,14 +22,13 @@ internal fun <T> removeItem(
     val childIterator = node.children.iterator()
     while (childIterator.hasNext()) {
         val child = childIterator.next()
-        if (!child.bounds.intersects(itemBounds)) continue
-        if (!removeItem(child, item, itemBounds)) continue
-
-        if (child.childCount == 0) {
-            childIterator.remove()
+        if (child.bounds.intersects(itemBounds) && removeItem(child, item, itemBounds)) {
+            if (child.childCount == 0) {
+                childIterator.remove()
+            }
+            node.recalculateBounds()
+            return true
         }
-        node.recalculateBounds()
-        return true
     }
     return false
 }

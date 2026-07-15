@@ -1,6 +1,9 @@
 package tilo.spatial
 
-internal fun ceilDiv(value: Int, divisor: Int): Int = (value + divisor - 1) / divisor
+internal fun ceilDiv(
+    value: Int,
+    divisor: Int,
+): Int = (value + divisor - 1) / divisor
 
 internal fun ceilSqrt(value: Int): Int {
     var result = 1
@@ -8,7 +11,10 @@ internal fun ceilSqrt(value: Int): Int {
     return result
 }
 
-internal fun intersectionArea(a: SpatialRect, b: SpatialRect): Double {
+internal fun intersectionArea(
+    a: SpatialRect,
+    b: SpatialRect,
+): Double {
     val minX = maxOf(a.minX, b.minX)
     val minY = maxOf(a.minY, b.minY)
     val maxX = minOf(a.maxX, b.maxX)

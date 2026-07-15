@@ -14,7 +14,7 @@ package tilo.spatial
  */
 class RBush<T>(
     maxEntries: Int = DEFAULT_MAX_ENTRIES,
-    private val boundsOf: (T) -> SpatialRect
+    private val boundsOf: (T) -> SpatialRect,
 ) {
     internal val maxEntries = maxOf(MIN_MAX_ENTRIES, maxEntries)
     internal val minEntries = maxOf(MIN_MIN_ENTRIES, this.maxEntries * MIN_FILL_PERCENT / PERCENT)
@@ -27,9 +27,10 @@ class RBush<T>(
      *
      * The order is tree order, not insertion order.
      */
-    fun all(): List<T> = buildList {
-        collectItems(root, this)
-    }
+    fun all(): List<T> =
+        buildList {
+            collectItems(root, this)
+        }
 
     /**
      * Removes all items and restores the tree to an empty one-level leaf root.
@@ -88,9 +89,10 @@ class RBush<T>(
      * This returns bbox candidates. If callers need exact geometry intersection, they should
      * run that more expensive check on this much smaller result set.
      */
-    fun search(bounds: SpatialRect): List<T> = buildList {
-        searchIntersections(root, bounds, this)
-    }
+    fun search(bounds: SpatialRect): List<T> =
+        buildList {
+            searchIntersections(root, bounds, this)
+        }
 
     fun isEmpty(): Boolean = size == 0
 
@@ -105,5 +107,4 @@ class RBush<T>(
     }
 }
 
-fun <T : SpatialItem> RBush(maxEntries: Int = 9): RBush<T> =
-    RBush(maxEntries = maxEntries) { it.bounds }
+fun <T : SpatialItem> RBush(maxEntries: Int = 9): RBush<T> = RBush(maxEntries = maxEntries) { it.bounds }
